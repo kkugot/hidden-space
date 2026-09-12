@@ -4,16 +4,27 @@ Hide selected Zen Spaces on this device while keeping them synced.
 
 Use work and home Macs with the same synced Spaces, then choose which ones each Mac shows. Hidden Space changes the browser UI. It never deletes, moves, or removes Spaces or tabs from sync.
 
+![Show Spaces in the + menu, with Work hidden and Personal, Learning, and Travel visible](screenshots/plus-menu.png)
+
 ## Use
 
 Open **Show Spaces** from the **+** menu or by right-clicking a Space. In the context menu it sits between **Create Space** and **Share Space**.
 
 Check a Space to show it on this device; uncheck it to hide it. Each row includes its Zen icon and name. The checklist in Sine settings uses the same convention. No IDs to copy.
 
-
 The last visible Space cannot be hidden through the menu. If a manually edited list hides everything, the first Space stays visible. Hiding the active Space switches to an available Space.
 
 Hidden Spaces disappear from the Space icon strip and native Space menus. Next/previous Space navigation skips them. Direct shortcuts to a hidden Space stay in the current visible Space. Check a Space in Show Spaces before opening it intentionally.
+
+## Screenshots
+
+The same checklist is available from a Space's context menu and from Sine settings.
+
+<img src="screenshots/context-menu.png" alt="Show Spaces between Create Space and Share Space in the context menu" width="490">
+
+<img src="screenshots/settings.png" alt="Hidden Space settings with Work unchecked and the other three Spaces checked" width="800">
+
+Screenshots use sample Spaces in a separate profile. A checked Space is visible on this device; an unchecked Space remains synced but is hidden here.
 
 ## Startup
 

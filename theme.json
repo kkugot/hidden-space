@@ -34,5 +34,6 @@
   "readme": "https://raw.githubusercontent.com/kkugot/hidden-space/main/README.md",
   "createdAt": "2026-09-12",
   "homepage": "https://github.com/kkugot/hidden-space",
-  "supportsUnload": true
+  "supportsUnload": true,
+  "image": "https://raw.githubusercontent.com/kkugot/hidden-space/main/marketplace-preview.png"
 }
