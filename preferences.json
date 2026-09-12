@@ -5,12 +5,6 @@
     "size": "14px"
   },
   {
-    "property": "uc.hidden-space.reveal",
-    "label": "Show hidden Spaces on this device",
-    "type": "checkbox",
-    "defaultValue": false
-  },
-  {
     "id": "hidden-space-picker",
     "type": "separator",
     "label": "Enable JavaScript for custom mods in Sine to choose Spaces here."

@@ -5,7 +5,7 @@ Dependency-free Zen Sine mod. No build step.
 - Keep author Kostiantyn Kugot and repository kkugot/hidden-space.
 - Never mutate Space records, tabs, or sync data. Never filter Zen's getWorkspaces().
 - Settings are profile-local. Keep custom preferences opted out of Firefox preference sync.
-- Keep at least one visible Space and preserve the reveal control.
+- Keep at least one visible Space. Restore hidden Spaces through the Show Spaces checklist.
 - Restore navigation methods, styles, menus, and observers on unload.
 - Check against installed Zen source when changing selectors or navigation wrappers.
 - The settings script is space-picker.uc.js, loaded only in about:preferences.

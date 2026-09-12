@@ -1,19 +1,18 @@
 // ==UserScript==
 // @name           Hidden Space
 // @author         Kostiantyn Kugot
-// @version        1.2.0
+// @version        1.3.0
 // @description    Hide selected Zen Spaces on this device.
 // @include        chrome://browser/content/browser.xhtml
 // ==/UserScript==
 
 (() => {
   const PREF = 'uc.hidden-space.ids';
-  const REVEAL = 'uc.hidden-space.reveal';
   const parseIds = raw => new Set(raw.split(',').map(id => id.trim()).filter(Boolean));
 
-  function visibleSpaces(spaces, raw, reveal = false) {
+  function visibleSpaces(spaces, raw) {
     const hidden = parseIds(raw);
-    const visible = reveal ? spaces : spaces.filter(space => !hidden.has(space.uuid));
+    const visible = spaces.filter(space => !hidden.has(space.uuid));
     // A stale or manually edited list must never leave the browser without a Space.
     return visible.length ? visible : spaces.slice(0, 1);
   }
@@ -34,12 +33,13 @@
   }
 
   window.HiddenSpace?.destroy();
+  // Retire the old override without changing the saved Space selection.
+  Services.prefs.clearUserPref('uc.hidden-space.reveal');
   let manager, originalChange, originalShortcut, change, shortcut, menu, style, context, restoreMenu;
   let stopped = false;
   let timer;
   const ids = () => Services.prefs.getStringPref(PREF, '');
-  const revealed = () => Services.prefs.getBoolPref(REVEAL, false);
-  const visible = () => visibleSpaces(manager.getWorkspaces(), ids(), revealed());
+  const visible = () => visibleSpaces(manager.getWorkspaces(), ids());
   const report = error => console.error('[Hidden Space]', error);
 
   function refresh() {
@@ -91,7 +91,6 @@
           shown.delete(space.uuid);
         } else shown.add(space.uuid);
         Services.prefs.setStringPref(PREF, manager.getWorkspaces().filter(s => !shown.has(s.uuid)).map(s => s.uuid).join(','));
-        Services.prefs.setBoolPref(REVEAL, false);
       });
       popup.appendChild(item);
     }
@@ -100,9 +99,7 @@
   function createVisibilityMenu(id) {
     const element = document.createXULElement('menu');
     element.id = id;
-    element.classList.add('menu-iconic');
-    element.setAttribute('image', 'chrome://browser/skin/zen-icons/selectable/eye.svg');
-    element.setAttribute('label', 'Show/Hide Spaces');
+    element.setAttribute('label', 'Show Spaces');
     element.appendChild(document.createXULElement('menupopup'));
     element.addEventListener('popupshowing', populate);
     return element;
@@ -124,7 +121,7 @@
       return originalChange.call(this, space, ...args);
     };
     shortcut = function (offset = 1, whileScrolling = false, disableWrap = false) {
-      if (!ids() || revealed()) return originalShortcut.call(this, offset, whileScrolling, disableWrap);
+      if (!ids()) return originalShortcut.call(this, offset, whileScrolling, disableWrap);
       const target = nextSpace(visible(), this.activeWorkspace, offset, this.shouldWrapAroundNavigation && !disableWrap);
       return target ? this.changeWorkspace(target, { whileScrolling }) : Promise.resolve();
     };
@@ -136,6 +133,8 @@
     menu = createVisibilityMenu('hidden-space-menu');
     context.insertBefore(menu, document.getElementById('context_zenShareWorkspace'));
     restoreMenu = createVisibilityMenu('hidden-space-restore');
+    restoreMenu.classList.add('menu-iconic');
+    restoreMenu.setAttribute('image', 'chrome://browser/skin/zen-icons/selectable/eye.svg');
     const createPopup = document.getElementById('zenCreateNewPopup');
     createPopup?.insertBefore(restoreMenu, createPopup.firstElementChild?.nextSibling);
     manager.addChangeListeners(schedule);
@@ -148,7 +147,6 @@
     stopped = true;
     clearTimeout(timer);
     Services.prefs.removeObserver(PREF, observer);
-    Services.prefs.removeObserver(REVEAL, observer);
     window.removeEventListener('ZenWorkspacesUIUpdate', onUpdate);
     window.removeEventListener('AfterWorkspacesSessionRestore', onUpdate);
     window.removeEventListener('unload', destroy);
@@ -165,12 +163,9 @@
 
   // Firefox Sync uses these explicit allowlist flags for custom preferences.
   // Sine stores these settings in this profile's prefs, separate from Zen Spaces Sync.
-  for (const pref of [PREF, REVEAL]) {
-    Services.prefs.setBoolPref(`services.sync.prefs.sync.${pref}`, false);
-    Services.prefs.setBoolPref(`services.sync.prefs.sync-seen.${pref}`, false);
-  }
+  Services.prefs.setBoolPref(`services.sync.prefs.sync.${PREF}`, false);
+  Services.prefs.setBoolPref(`services.sync.prefs.sync-seen.${PREF}`, false);
   Services.prefs.addObserver(PREF, observer);
-  Services.prefs.addObserver(REVEAL, observer);
   window.addEventListener('ZenWorkspacesUIUpdate', onUpdate);
   window.addEventListener('AfterWorkspacesSessionRestore', onUpdate);
   window.addEventListener('unload', destroy, { once: true });

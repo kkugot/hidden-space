@@ -10,7 +10,7 @@ test('hidden selections preserve a visible fallback and never modify synced spac
   const before = JSON.stringify(spaces);
   assert.deepEqual(policy.visibleSpaces(spaces, ' work, missing, work '), [spaces[0], spaces[2]]);
   assert.deepEqual(policy.visibleSpaces(spaces, 'home,work,other'), [spaces[0]]);
-  assert.deepEqual(policy.visibleSpaces(spaces, 'work', true), spaces);
+  assert.deepEqual(policy.visibleSpaces(spaces, 'work', true), [spaces[0], spaces[2]]);
   assert.deepEqual(policy.visibleSpaces([], 'work'), []);
   assert.equal(JSON.stringify(spaces), before);
 });

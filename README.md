@@ -6,22 +6,28 @@ Use work and home Macs with the same synced Spaces, then choose which ones each 
 
 ## Use
 
-Open **Show/Hide Spaces** from the **+** menu or by right-clicking a Space. In the context menu it sits between **Create Space** and **Share Space**.
+Open **Show Spaces** from the **+** menu or by right-clicking a Space. In the context menu it sits between **Create Space** and **Share Space**.
 
 Check a Space to show it on this device; uncheck it to hide it. Each row includes its Zen icon and name. The checklist in Sine settings uses the same convention. No IDs to copy.
 
-The **Show hidden Spaces on this device** switch in Sine settings temporarily reveals everything without clearing the saved selection. Editing the menu while this switch is on saves the visible selection and exits temporary reveal mode.
 
 The last visible Space cannot be hidden through the menu. If a manually edited list hides everything, the first Space stays visible. Hiding the active Space switches to an available Space.
 
-Hidden Spaces disappear from the Space icon strip and native Space menus. Next/previous Space navigation skips them. Direct shortcuts to a hidden Space stay in the current visible Space. Check a Space in Show/Hide Spaces before opening it intentionally.
+Hidden Spaces disappear from the Space icon strip and native Space menus. Next/previous Space navigation skips them. Direct shortcuts to a hidden Space stay in the current visible Space. Check a Space in Show Spaces before opening it intentionally.
+
+## Startup
+
+**Open previous windows and tabs** restores the session. Zen's **Continue where you left off** additionally selects the last active tab instead of starting on a blank/home page.
+
+If a restored Space is hidden here, Hidden Space selects the first visible Space. The mod checks again after Zen finishes restoring its session. It always leaves at least one Space visible.
+
+Tested with real restarts on Zen 1.22.1b, with a hidden Space and its tab saved as active: both settings recovered to a visible Space. With Continue enabled, a tab in that visible Space was selected; with it disabled, Zen selected its blank start page. This was an isolated local restore test, not a two-device sync test. A brief startup flash before the mod loads is not ruled out.
 
 ## Local settings
 
 Selections are saved by Space ID in this Zen profile, so renaming a Space keeps its selection. Configure each machine separately. New synced Spaces appear until you hide them.
 
 - `uc.hidden-space.ids`: comma-separated Space IDs, managed by the settings list and Space menus.
-- `uc.hidden-space.reveal`: reveal the selected hidden Spaces without clearing the list.
 
 The mod explicitly opts these preferences out of Firefox preference sync. It does not alter Zen's Spaces Sync records. Copying a browser profile manually also copies its local preferences.
 
@@ -29,7 +35,7 @@ This is visual filtering, not a privacy boundary. Tabs still exist locally and r
 
 ## Install with Sine
 
-Add `kkugot/hidden-space` through Sine's custom repository installation and enable the mod's JavaScript when prompted. For a local or custom repository install, turn on Sine’s **Enable installing JS from unofficial sources** setting (`sine.allow-unsafe-js`). This is Sine’s permission for JavaScript in all enabled non-store mods; Hidden Space does not modify Sine. Store installs do not need this setting. Requires Sine with chrome script support. Developed and runtime-tested with Zen 1.22b.
+Add `kkugot/hidden-space` through Sine's custom repository installation and enable the mod's JavaScript when prompted. For a local or custom repository install, turn on Sine’s **Enable installing JS from unofficial sources** setting (`sine.allow-unsafe-js`). This is Sine’s permission for JavaScript in all enabled non-store mods; Hidden Space does not modify Sine. Store installs do not need this setting. Requires Sine with chrome script support. Runtime-tested with Zen 1.22.1b.
 
 ### Local development
 

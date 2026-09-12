@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0 · 2026-09-12
+
+- Remove the reveal-all override; the Show Spaces checklist is the only visibility setting.
+- Clear the retired override preference while preserving saved hidden Space IDs.
+- Verify restart recovery from a hidden active Space with Continue where you left off on and off.
+
+- Rename the visibility menus to Show Spaces; keep the eye icon only in the + menu.
+
 ## 1.2.0 · 2026-09-12
 
 - Unify menu actions into Show/Hide Spaces with checked meaning visible.
