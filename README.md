@@ -6,17 +6,15 @@ Use work and home Macs with the same synced Spaces, then choose which ones each 
 
 ## Use
 
-Open Hidden Space settings in Sine and check the Spaces to hide on this device. The list uses names from Zen and updates when Spaces change. No IDs to copy.
+Open **Show/Hide Spaces** from the **+** menu or by right-clicking a Space. In the context menu it sits between **Create Space** and **Share Space**.
 
-To hide a Space directly, right-click its icon or header and choose **Hide this Space on this device**.
+Check a Space to show it on this device; uncheck it to hide it. Each row includes its Zen icon and name. The checklist in Sine settings uses the same convention. No IDs to copy.
 
-To restore one, open the **+** menu, choose **Show hidden Space**, then select its name. Zen reveals it and switches to it.
-
-Uncheck a Space to bring it back. **Show hidden Spaces** temporarily reveals the entire list without clearing your choices. The same reveal switch is available in Sine settings.
+The **Show hidden Spaces on this device** switch in Sine settings temporarily reveals everything without clearing the saved selection. Editing the menu while this switch is on saves the visible selection and exits temporary reveal mode.
 
 The last visible Space cannot be hidden through the menu. If a manually edited list hides everything, the first Space stays visible. Hiding the active Space switches to an available Space.
 
-Hidden Spaces disappear from the Space icon strip and native Space menus. Next/previous Space navigation skips them. Direct shortcuts to a hidden Space stay in the current visible Space. Reveal hidden Spaces before opening one intentionally.
+Hidden Spaces disappear from the Space icon strip and native Space menus. Next/previous Space navigation skips them. Direct shortcuts to a hidden Space stay in the current visible Space. Check a Space in Show/Hide Spaces before opening it intentionally.
 
 ## Local settings
 

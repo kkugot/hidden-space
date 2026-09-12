@@ -1,7 +1,7 @@
 [
   {
     "type": "text",
-    "label": "Checked Spaces are hidden only on this device. At least one Space stays visible.",
+    "label": "Checked Spaces are visible on this device. At least one Space stays visible.",
     "size": "14px"
   },
   {

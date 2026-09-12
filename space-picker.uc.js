@@ -1,4 +1,4 @@
-// Hidden Space settings · Kostiantyn Kugot · 1.1.0
+// Hidden Space settings · Kostiantyn Kugot · 1.2.0
 (() => {
   window.HiddenSpacePicker?.destroy();
   const PREF = 'uc.hidden-space.ids';
@@ -18,7 +18,7 @@
     const focusedId = host.contains(document.activeElement) ? document.activeElement?.value : null;
     host.replaceChildren();
     const heading = document.createElementNS('http://www.w3.org/1999/xhtml', 'p');
-    heading.textContent = 'Hide Spaces on this device';
+    heading.textContent = 'Visible Spaces on this device';
     host.appendChild(heading);
     const remaining = spaces.filter(s => !selected.has(s.uuid)).length;
     for (const space of spaces) {
@@ -27,18 +27,26 @@
       const input = document.createElementNS('http://www.w3.org/1999/xhtml', 'input');
       input.type = 'checkbox';
       input.value = space.uuid;
-      input.checked = selected.has(space.uuid);
-      input.disabled = !input.checked && remaining <= 1;
+      input.checked = !selected.has(space.uuid);
+      input.disabled = input.checked && remaining <= 1;
       input.addEventListener('change', () => {
         const ids = selectedIds();
-        if (input.checked) {
+        if (!input.checked) {
           const visible = browserWindow.gZenWorkspaces.getWorkspaces().filter(s => !ids.has(s.uuid));
-          if (visible.length <= 1) { input.checked = false; render(); return; }
+          if (visible.length <= 1) { input.checked = true; render(); return; }
           ids.add(space.uuid);
         } else ids.delete(space.uuid);
         Services.prefs.setStringPref(PREF, [...ids].join(','));
       });
-      label.append(input, document.createTextNode(space.name));
+      label.appendChild(input);
+      if (space.icon?.endsWith('.svg')) {
+        const icon = document.createElementNS('http://www.w3.org/1999/xhtml', 'img');
+        icon.src = space.icon;
+        icon.alt = '';
+        icon.style.cssText = 'width:16px;height:16px;-moz-context-properties:fill;fill:currentColor;';
+        label.appendChild(icon);
+      }
+      label.appendChild(document.createTextNode(`${space.icon && !space.icon.endsWith('.svg') ? space.icon + '  ' : ''}${space.name}`));
       host.appendChild(label);
       if (space.uuid === focusedId) input.focus();
     }

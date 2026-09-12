@@ -22,7 +22,7 @@ python3 tests/zen-runtime.py
 Validated on Zen 1.22b on 2026-09-12:
 
 - The Sine settings checklist, checkbox actions, live Space changes, and last-visible protection.
-- Context-menu actions target the clicked Space; the + menu restores one Space.
+- Both Show/Hide Spaces menus list all Spaces, toggle visibility, and protect the last visible Space. The context menu appears between Create and Share.
 - Sine loads and unloads both scripts.
 - Space icon hiding and reveal through computed styles.
 - Space session records remain unchanged when the hide list changes.

@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0 · 2026-09-12
+
+- Unify menu actions into Show/Hide Spaces with checked meaning visible.
+- Place the context submenu between Create Space and Share Space; keep it in the + menu too.
+- Show each Space’s emoji or SVG icon alongside its name.
+- Match the checklist in Sine settings to the visible/hidden menu convention.
+- Fix native XUL menu items appearing disabled when the attribute contained false.
+
 ## 1.1.1 · 2026-09-12
 
 - Add Zen’s native eye icon to Show hidden Space in the + menu.
