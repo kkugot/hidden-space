@@ -6,9 +6,11 @@ Use work and home Macs with the same synced Spaces, then choose which ones each 
 
 ## Use
 
-1. Right-click a Space icon or its header.
-2. Open **Hidden Space · This device**.
-3. Check the Spaces to hide on this Mac.
+Open Hidden Space settings in Sine and check the Spaces to hide on this device. The list uses names from Zen and updates when Spaces change. No IDs to copy.
+
+To hide a Space directly, right-click its icon or header and choose **Hide this Space on this device**.
+
+To restore one, open the **+** menu, choose **Show hidden Space**, then select its name. Zen reveals it and switches to it.
 
 Uncheck a Space to bring it back. **Show hidden Spaces** temporarily reveals the entire list without clearing your choices. The same reveal switch is available in Sine settings.
 
@@ -20,7 +22,7 @@ Hidden Spaces disappear from the Space icon strip and native Space menus. Next/p
 
 Selections are saved by Space ID in this Zen profile, so renaming a Space keeps its selection. Configure each machine separately. New synced Spaces appear until you hide them.
 
-- `uc.hidden-space.ids`: comma-separated Space IDs, managed by the context menu.
+- `uc.hidden-space.ids`: comma-separated Space IDs, managed by the settings list and Space menus.
 - `uc.hidden-space.reveal`: reveal the selected hidden Spaces without clearing the list.
 
 The mod explicitly opts these preferences out of Firefox preference sync. It does not alter Zen's Spaces Sync records. Copying a browser profile manually also copies its local preferences.
@@ -29,7 +31,7 @@ This is visual filtering, not a privacy boundary. Tabs still exist locally and r
 
 ## Install with Sine
 
-Add `kkugot/hidden-space` through Sine's custom repository installation and enable the mod's JavaScript when prompted. Requires Sine with chrome script support. Developed and runtime-tested with Zen 1.22b.
+Add `kkugot/hidden-space` through Sine's custom repository installation and enable the mod's JavaScript when prompted. For a local or custom repository install, turn on Sine’s **Enable installing JS from unofficial sources** setting (`sine.allow-unsafe-js`). This is Sine’s permission for JavaScript in all enabled non-store mods; Hidden Space does not modify Sine. Store installs do not need this setting. Requires Sine with chrome script support. Developed and runtime-tested with Zen 1.22b.
 
 ### Local development
 
@@ -45,10 +47,11 @@ To disable, turn off Hidden Space in Sine. Disabling restores the controls and n
 
 ## Development
 
-No dependencies or build step. Sine loads `hidden-space.uc.js` directly. The script owns its stylesheet, menu, preference observers, and two navigation wrappers; unloading restores them. It does not filter `getWorkspaces()`, because Zen uses that list for storage and sync.
+No dependencies or build step. Sine loads `hidden-space.uc.js` directly. `space-picker.uc.js` adds the live checklist to Sine’s settings dialog. The browser script owns its stylesheet, menu, preference observers, and two navigation wrappers; unloading restores them. It does not filter `getWorkspaces()`, because Zen uses that list for storage and sync.
 
 ```sh
 node --check hidden-space.uc.js
+node --check space-picker.uc.js
 node --test tests/hidden-space.test.cjs
 ```
 

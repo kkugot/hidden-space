@@ -26,7 +26,7 @@ js("Services.prefs.clearUserPref('uc.hidden-space.ids'); Services.prefs.clearUse
 def asyncjs(script):
  return call('WebDriver:ExecuteAsyncScript',{'script':'const done = arguments[arguments.length - 1]; (async () => {'+script+'})().then(done, e => done({error:String(e),stack:e.stack}));','args':[],'newSandbox':False,'sandbox':'system','scriptTimeout':30000})
 print(asyncjs('if (!gZenWorkspaces.getWorkspaces().some(s=>s.name === "Work")) { await gZenWorkspaces.createAndSaveWorkspace("Work"); await gZenWorkspaces.createAndSaveWorkspace("Personal"); } return gZenWorkspaces.getWorkspaces().map(s=>({uuid:s.uuid,name:s.name}));'))
-print(js('Services.io.getProtocolHandler("resource").QueryInterface(Ci.nsIResProtocolHandler).setSubstitution("hidden-space-test", Services.io.newURI("' + (Path(__file__).resolve().parents[1].as_uri() + '/') + '")); Services.scriptloader.loadSubScript("resource://hidden-space-test/hidden-space.uc.js", window); return {loaded:!!window.HiddenSpace,menu:!!document.getElementById("hidden-space-menu")};'))
+print(asyncjs("Services.prefs.setBoolPref('sine.allow-unsafe-js', true); await ChromeUtils.importESModule('chrome://userscripts/content/core/manager.sys.mjs').default.rebuildMods(); return {loaded:!!window.HiddenSpace, menu:!!document.getElementById('hidden-space-menu')};"))
 result = asyncjs('''
 const manager = gZenWorkspaces;
 const spaces = manager.getWorkspaces();
@@ -53,7 +53,9 @@ await new Promise(r=>setTimeout(r,500));
 results.activeRecovered = manager.activeWorkspace !== work.uuid;
 const popup = document.querySelector('#hidden-space-menu > menupopup');
 popup.dispatchEvent(new Event('popupshowing', {bubbles:true}));
-results.menuChecked = [...popup.children].find(e=>e.getAttribute('label')==='Work').getAttribute('checked') === 'true';
+const workItem = [...popup.children].find(e=>e.getAttribute('label')==='Work');
+if (!workItem) throw new Error(JSON.stringify({popup:popup.outerHTML,menus:document.querySelectorAll('#hidden-space-menu').length,spaces:manager.getWorkspaces().map(s=>s.name)}));
+results.menuChecked = workItem.getAttribute('checked') === 'true';
 Services.prefs.setStringPref('uc.hidden-space.ids', spaces.map(s=>s.uuid).join(','));
 await new Promise(r=>setTimeout(r,300));
 results.fallbackVisible = getComputedStyle(document.querySelector(`zen-workspace-icons toolbarbutton[zen-workspace-id="${spaces[0].uuid}"]`)).display !== 'none';
@@ -63,7 +65,55 @@ await manager.changeWorkspace(work);
 results.navigationRestored = manager.activeWorkspace === work.uuid;
 return results;
 ''')['value']
+settings = asyncjs('''
+Services.prefs.setBoolPref('sine.allow-unsafe-js', true);
+const sine = ChromeUtils.importESModule('chrome://userscripts/content/core/manager.sys.mjs').default;
+await sine.rebuildMods();
+const tab = gBrowser.addTrustedTab('about:preferences#sineMods');
+gBrowser.selectedTab = tab;
+await new Promise(r=>setTimeout(r,2500));
+const doc = tab.linkedBrowser.contentDocument;
+Services.prefs.setStringPref('uc.hidden-space.ids', '');
+await new Promise(r=>setTimeout(r,100));
+const checkboxes = doc?.querySelectorAll('#hidden-space-picker input[type="checkbox"]');
+const result = {settingsList:checkboxes?.length === gZenWorkspaces.getWorkspaces().length,
+  directAction:!!document.getElementById('hidden-space-toggle')};
+const spaces = gZenWorkspaces.getWorkspaces();
+const work = spaces.find(s=>s.name === 'Work');
+const input = [...checkboxes].find(e=>e.value === work.uuid);
+input.click();
+await new Promise(r=>setTimeout(r,100));
+result.settingsToggle = Services.prefs.getStringPref('uc.hidden-space.ids') === work.uuid;
+const popup = document.querySelector('#hidden-space-restore > menupopup');
+popup.dispatchEvent(new Event('popupshowing', {bubbles:true}));
+result.restoreList = popup.children.length === 1 && popup.firstElementChild.getAttribute('label') === 'Work';
+popup.firstElementChild.doCommand();
+await new Promise(r=>setTimeout(r,200));
+result.restoreOne = !Services.prefs.getStringPref('uc.hidden-space.ids') && gZenWorkspaces.activeWorkspace === work.uuid;
+const other = spaces.find(s=>s.uuid !== work.uuid);
+document.popupNode = document.querySelector(`zen-workspace-icons toolbarbutton[zen-workspace-id="${other.uuid}"]`);
+const context = document.getElementById('zenWorkspaceMoreActions');
+context.dispatchEvent(new Event('popupshowing', {bubbles:true}));
+document.getElementById('hidden-space-toggle').doCommand();
+await new Promise(r=>setTimeout(r,100));
+result.contextTarget = Services.prefs.getStringPref('uc.hidden-space.ids') === other.uuid;
+Services.prefs.setStringPref('uc.hidden-space.ids', spaces.filter(s=>s.uuid !== work.uuid).map(s=>s.uuid).join(','));
+await new Promise(r=>setTimeout(r,100));
+result.lastVisibleProtected = [...doc.querySelectorAll('#hidden-space-picker input')].find(e=>e.value===work.uuid).disabled;
+const newSpace = await gZenWorkspaces.createAndSaveWorkspace('New Space');
+await new Promise(r=>setTimeout(r,150));
+result.liveSpaceList = [...doc.querySelectorAll('#hidden-space-picker input')].some(e=>e.value===newSpace.uuid);
+gZenWorkspaces.removeWorkspace(newSpace.uuid);
+await new Promise(r=>setTimeout(r,100));
+result.removedSpaceGone = ![...doc.querySelectorAll('#hidden-space-picker input')].some(e=>e.value===newSpace.uuid);
+await sine.removeUnloadListeners('hidden-space');
+result.settingsUnload = !doc.querySelector('#hidden-space-picker input') && !document.getElementById('hidden-space-toggle') && !document.getElementById('hidden-space-restore');
+gBrowser.removeTab(tab);
+return result;
+''')['value']
 call('WebDriver:DeleteSession')
+assert 'error' not in settings, settings
+assert all(value is True for value in settings.values()), settings
 assert 'error' not in result, result
 assert all(value is True for value in result.values()), result
-print(f'{len(result)} Zen runtime checks passed')
+print(f'{len(result) + len(settings)} Zen runtime checks passed')

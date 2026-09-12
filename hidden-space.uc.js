@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Hidden Space
 // @author         Kostiantyn Kugot
-// @version        1.0.0
+// @version        1.1.0
 // @description    Hide selected Zen Spaces on this device.
 // @include        chrome://browser/content/browser.xhtml
 // ==/UserScript==
@@ -34,7 +34,8 @@
   }
 
   window.HiddenSpace?.destroy();
-  let manager, originalChange, originalShortcut, change, shortcut, menu, style;
+  let manager, originalChange, originalShortcut, change, shortcut, menu, style, action, context, restoreMenu;
+  let contextSpaceId;
   let stopped = false;
   let timer;
   const ids = () => Services.prefs.getStringPref(PREF, '');
@@ -70,7 +71,7 @@
   }
 
   function populate(event) {
-    if (event.target !== menu.firstElementChild) return;
+    if (event.target !== menu.querySelector(':scope > menupopup')) return;
     const popup = event.target;
     popup.replaceChildren();
     const selected = parseIds(ids());
@@ -99,10 +100,54 @@
     popup.appendChild(reveal);
   }
 
+  function updateAction(event) {
+    if (event.target !== context) return;
+    const target = context.triggerNode || document.popupNode;
+    contextSpaceId = target?.closest?.('[zen-workspace-id]')?.getAttribute('zen-workspace-id')
+      || target?.closest?.('zen-workspace')?.id || manager.activeWorkspace;
+    const hidden = parseIds(ids()).has(contextSpaceId);
+    action.setAttribute('label', hidden ? 'Show this Space on this device' : 'Hide this Space on this device');
+    action.disabled = !hidden && manager.getWorkspaces().filter(s => !parseIds(ids()).has(s.uuid)).length <= 1;
+  }
+
+  function toggleContextSpace() {
+    const selected = parseIds(ids());
+    if (selected.has(contextSpaceId)) selected.delete(contextSpaceId);
+    else {
+      if (manager.getWorkspaces().filter(s => !selected.has(s.uuid)).length <= 1) return;
+      selected.add(contextSpaceId);
+    }
+    Services.prefs.setStringPref(PREF, [...selected].join(','));
+  }
+
+  function populateHidden(event) {
+    if (event.target !== restoreMenu.querySelector(':scope > menupopup')) return;
+    const popup = event.target;
+    popup.replaceChildren();
+    const selected = parseIds(ids());
+    for (const space of manager.getWorkspaces().filter(s => selected.has(s.uuid))) {
+      const item = document.createXULElement('menuitem');
+      item.setAttribute('label', space.name);
+      item.addEventListener('command', () => {
+        const current = parseIds(ids());
+        current.delete(space.uuid);
+        Services.prefs.setStringPref(PREF, [...current].join(','));
+        void manager.changeWorkspace(space).catch(report);
+      });
+      popup.appendChild(item);
+    }
+    if (!popup.children.length) {
+      const empty = document.createXULElement('menuitem');
+      empty.setAttribute('label', 'No hidden Spaces');
+      empty.disabled = true;
+      popup.appendChild(empty);
+    }
+  }
+
   function init() {
     if (stopped || manager) return;
     const candidate = window.gZenWorkspaces;
-    const context = document.getElementById('zenWorkspaceMoreActions');
+    context = document.getElementById('zenWorkspaceMoreActions');
     if (!candidate?.getWorkspaces || !context || !candidate.getWorkspaces().length) return;
     manager = candidate;
     originalChange = manager.changeWorkspace;
@@ -129,7 +174,19 @@
     menu.setAttribute('label', 'Hidden Space · This device');
     menu.appendChild(document.createXULElement('menupopup'));
     menu.addEventListener('popupshowing', populate);
-    context.appendChild(menu);
+    action = document.createXULElement('menuitem');
+    action.id = 'hidden-space-toggle';
+    action.setAttribute('label', 'Hide this Space on this device');
+    action.addEventListener('command', toggleContextSpace);
+    context.addEventListener('popupshowing', updateAction);
+    context.append(action, menu);
+    restoreMenu = document.createXULElement('menu');
+    restoreMenu.id = 'hidden-space-restore';
+    restoreMenu.setAttribute('label', 'Show hidden Space');
+    restoreMenu.appendChild(document.createXULElement('menupopup'));
+    restoreMenu.addEventListener('popupshowing', populateHidden);
+    const createPopup = document.getElementById('zenCreateNewPopup');
+    createPopup?.insertBefore(restoreMenu, createPopup.firstElementChild?.nextSibling);
     manager.addChangeListeners(schedule);
     refresh();
   }
@@ -149,6 +206,9 @@
       if (manager.changeWorkspace === change) manager.changeWorkspace = originalChange;
       if (manager.changeWorkspaceShortcut === shortcut) manager.changeWorkspaceShortcut = originalShortcut;
     }
+    context?.removeEventListener('popupshowing', updateAction);
+    action?.remove();
+    restoreMenu?.remove();
     menu?.remove();
     style?.remove();
     delete window.HiddenSpace;

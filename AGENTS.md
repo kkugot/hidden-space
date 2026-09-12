@@ -8,6 +8,7 @@ Dependency-free Zen Sine mod. No build step.
 - Keep at least one visible Space and preserve the reveal control.
 - Restore navigation methods, styles, menus, and observers on unload.
 - Check against installed Zen source when changing selectors or navigation wrappers.
-- Run node --check hidden-space.uc.js and node --test tests/hidden-space.test.cjs.
+- The settings script is space-picker.uc.js, loaded only in about:preferences.
+- Run node --check space-picker.uc.js, node --check hidden-space.uc.js and node --test tests/hidden-space.test.cjs.
 - Run browser checks in an isolated profile, never create test Spaces in the user's profile.
 - Update version and release notes for user-visible changes.

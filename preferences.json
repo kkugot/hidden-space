@@ -1,7 +1,7 @@
 [
   {
     "type": "text",
-    "label": "Right-click a Space, then open Hidden Space \u00b7 This device. Checked Spaces are hidden only in this profile.",
+    "label": "Checked Spaces are hidden only on this device. At least one Space stays visible.",
     "size": "14px"
   },
   {
@@ -11,9 +11,8 @@
     "defaultValue": false
   },
   {
-    "property": "uc.hidden-space.ids",
-    "label": "Hidden Space IDs on this device (comma-separated; managed by the Space menu)",
-    "type": "string",
-    "defaultValue": ""
+    "id": "hidden-space-picker",
+    "type": "separator",
+    "label": "Enable JavaScript for custom mods in Sine to choose Spaces here."
   }
 ]

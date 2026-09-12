@@ -2,7 +2,7 @@
 
 `hidden-space.test.cjs` checks filtering, fallback behavior, immutable input, and navigation boundaries with Node's built-in test runner.
 
-`zen-runtime.py` uses Marionette to exercise the real Zen chrome APIs. It requires a dedicated temporary profile named `hidden-space-zen-test` under `/private/tmp`, and refuses to run against another profile. It creates Work and Personal test Spaces there. Never use a browsing profile.
+`zen-runtime.py` also requires Sine installed in that isolated profile and Hidden Space registered there with `scripts/install.py`. It enables custom-mod JavaScript only in the test profile. It uses Marionette to exercise the real Zen chrome APIs. It requires a dedicated temporary profile named `hidden-space-zen-test` under `/private/tmp`, and refuses to run against another profile. It creates Work and Personal test Spaces there. Never use a browsing profile.
 
 On macOS:
 
@@ -21,6 +21,9 @@ python3 tests/zen-runtime.py
 
 Validated on Zen 1.22b on 2026-09-12:
 
+- The Sine settings checklist, checkbox actions, live Space changes, and last-visible protection.
+- Context-menu actions target the clicked Space; the + menu restores one Space.
+- Sine loads and unloads both scripts.
 - Space icon hiding and reveal through computed styles.
 - Space session records remain unchanged when the hide list changes.
 - The local preference has Firefox Sync disabled.
