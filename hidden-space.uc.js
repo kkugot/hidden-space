@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Hidden Space
 // @author         Kostiantyn Kugot
-// @version        1.1.0
+// @version        1.1.1
 // @description    Hide selected Zen Spaces on this device.
 // @include        chrome://browser/content/browser.xhtml
 // ==/UserScript==
@@ -182,6 +182,8 @@
     context.append(action, menu);
     restoreMenu = document.createXULElement('menu');
     restoreMenu.id = 'hidden-space-restore';
+    restoreMenu.classList.add('menu-iconic');
+    restoreMenu.setAttribute('image', 'chrome://browser/skin/zen-icons/selectable/eye.svg');
     restoreMenu.setAttribute('label', 'Show hidden Space');
     restoreMenu.appendChild(document.createXULElement('menupopup'));
     restoreMenu.addEventListener('popupshowing', populateHidden);

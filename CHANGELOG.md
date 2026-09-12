@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1 · 2026-09-12
+
+- Add Zen’s native eye icon to Show hidden Space in the + menu.
+
 ## 1.1.0 · 2026-09-12
 
 - Replace the ID field in Sine settings with a live checklist of Space names.
