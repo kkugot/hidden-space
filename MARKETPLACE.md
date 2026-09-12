@@ -27,7 +27,7 @@ The [submission workflow](https://github.com/sineorg/store/blob/main/.github/wor
 - Browser: Zen
 - AI disclosure: `full`
 - Metadata: [theme.json](theme.json)
-- Preview: [marketplace-preview.png](marketplace-preview.png), 640 × 330 PNG
+- Preview: [marketplace-preview.png](marketplace-preview.png), 1536 × 1024 PNG, before/after illustration
 - Screenshots: [plus menu](screenshots/plus-menu.png), [context menu](screenshots/context-menu.png), [settings](screenshots/settings.png)
 - README: [public README](https://raw.githubusercontent.com/kkugot/hidden-space/main/README.md)
 - Preview URL: [public preview](https://raw.githubusercontent.com/kkugot/hidden-space/main/marketplace-preview.png)
@@ -42,6 +42,6 @@ JavaScript is required. Custom-repository installs need Sine's unofficial-JavaSc
 
 ## Validation
 
-Syntax checks and the Node policy tests pass. The browser integration suite and real startup restart checks passed on Zen 1.22.1b, including Continue where you left off both on and off. Screenshots were captured from real macOS Zen menus in a separate profile with sample Spaces; they were not generated or redrawn.
+Syntax checks and the Node policy tests pass. The browser integration suite and real startup restart checks passed on Zen 1.22.1b, including Continue where you left off both on and off. The store preview is an AI-generated before/after illustration based on the real menu screenshot. The three supporting screenshots were captured from real macOS Zen menus and settings in a separate profile with sample Spaces; those screenshots were not generated or redrawn.
 
 Cross-device sync and other operating systems have not been tested. This is a visual filter, not a privacy boundary. See [runtime validation](tests/README.md).
