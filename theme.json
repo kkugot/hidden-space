@@ -1,0 +1,33 @@
+{
+  "id": "hidden-space",
+  "name": "Hidden Space",
+  "description": "Hide selected Zen Spaces on this device while keeping them synced.",
+  "author": "Kostiantyn Kugot",
+  "version": "1.0.0",
+  "ai": "full",
+  "updatedAt": "2026-09-12",
+  "tags": [
+    "spaces",
+    "sidebar",
+    "sync"
+  ],
+  "fork": [
+    "zen"
+  ],
+  "scripts": {
+    "hidden-space.uc.js": {
+      "include": [
+        "chrome://browser/content/browser.xhtml"
+      ]
+    }
+  },
+  "style": {
+    "chrome": "",
+    "content": ""
+  },
+  "preferences": "preferences.json",
+  "readme": "https://raw.githubusercontent.com/kkugot/hidden-space/main/README.md",
+  "createdAt": "2026-09-12",
+  "homepage": "https://github.com/kkugot/hidden-space",
+  "supportsUnload": true
+}

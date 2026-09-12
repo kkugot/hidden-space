@@ -1,0 +1,19 @@
+[
+  {
+    "type": "text",
+    "label": "Right-click a Space, then open Hidden Space \u00b7 This device. Checked Spaces are hidden only in this profile.",
+    "size": "14px"
+  },
+  {
+    "property": "uc.hidden-space.reveal",
+    "label": "Show hidden Spaces on this device",
+    "type": "checkbox",
+    "defaultValue": false
+  },
+  {
+    "property": "uc.hidden-space.ids",
+    "label": "Hidden Space IDs on this device (comma-separated; managed by the Space menu)",
+    "type": "string",
+    "defaultValue": ""
+  }
+]
