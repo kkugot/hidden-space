@@ -30,6 +30,12 @@ The same checklist is available from the + menu, a Space's context menu, and Sin
 
 Screenshots use sample Spaces in a separate profile. A checked Space is visible on this device; an unchecked Space remains synced but is hidden here.
 
+## Settings shortcut
+
+If Cmd+, finds Settings in a hidden Space, Hidden Space reuses Settings in the current visible Space or opens a local copy. Repeated shortcuts reuse that copy. Links to specific settings sections continue to work. The hidden Settings tab keeps its URL and Space assignment.
+
+This exception covers `about:preferences` and `about:settings`. Other URLs keep Zen's normal tab-reuse behavior.
+
 ## Startup
 
 **Open previous windows and tabs** restores the session. Zen's **Continue where you left off** additionally selects the last active tab instead of starting on a blank/home page.
@@ -66,7 +72,7 @@ To disable, turn off Hidden Space in Sine. Disabling restores the controls and n
 
 ## Development
 
-No dependencies or build step. Sine loads `hidden-space.uc.js` directly. `space-picker.uc.js` adds the live checklist to Sine’s settings dialog. The browser script owns its stylesheet, menu, preference observers, and two navigation wrappers; unloading restores them. It does not filter `getWorkspaces()`, because Zen uses that list for storage and sync.
+No dependencies or build step. Sine loads `hidden-space.uc.js` directly. `space-picker.uc.js` adds the live checklist to Sine’s settings dialog. The browser script owns its stylesheet, menu, preference observers, and two navigation wrappers and the Settings-tab lookup wrapper; unloading restores them. It does not filter `getWorkspaces()`, because Zen uses that list for storage and sync.
 
 ```sh
 node --check hidden-space.uc.js

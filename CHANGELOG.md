@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.1 · 2026-09-13
+
+- Keep the Settings shortcut reachable when a matching Settings tab belongs to a hidden Space. Reuse a local visible Settings tab or open one without moving the hidden tab.
+- Preserve Settings pane links and restore native tab lookup on unload.
+
 ## 1.3.0 · 2026-09-12
 
 - Remove the reveal-all override; the Show Spaces checklist is the only visibility setting.

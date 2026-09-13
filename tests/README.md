@@ -42,3 +42,7 @@ These headless checks cover runtime behavior, not visual review of every toolbar
 With the isolated Zen instance running, `python3 tests/zen-startup.py on` saves a hidden Work Space and its tab as active, enables Continue where you left off, and quits that test instance normally. Start it again with the same command above, then run `python3 tests/zen-startup.py check`.
 
 Repeat using `off` instead of `on`, restart, and run `check`. The check verifies that Sine loaded the mod, the active Space and selected tab are visible, the hidden icon stays hidden, and the retired reveal preference was cleared. Tested on Zen 1.22.1b.
+
+## Settings shortcut regression
+
+Run `python3 tests/zen-settings-shortcut.py` against the same isolated Sine test profile. It creates a Settings tab in Work, hides Work, invokes Zen's `openPreferences` shortcut handler, and checks local reuse, pane navigation, unchanged hidden tab/Space records, and unload cleanup.

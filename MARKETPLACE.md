@@ -21,7 +21,7 @@ The [submission workflow](https://github.com/sineorg/store/blob/main/.github/wor
 - Name: Hidden Space
 - ID: `hidden-space`
 - Author: Kostiantyn Kugot
-- Version: 1.3.0
+- Version: 1.3.1
 - Description: Hide selected Zen Spaces on this device while keeping them synced.
 - License: MIT
 - Browser: Zen

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Hidden Space
 // @author         Kostiantyn Kugot
-// @version        1.3.0
+// @version        1.3.1
 // @description    Hide selected Zen Spaces on this device.
 // @include        chrome://browser/content/browser.xhtml
 // ==/UserScript==
@@ -35,7 +35,7 @@
   window.HiddenSpace?.destroy();
   // Retire the old override without changing the saved Space selection.
   Services.prefs.clearUserPref('uc.hidden-space.reveal');
-  let manager, originalChange, originalShortcut, change, shortcut, menu, style, context, restoreMenu;
+  let manager, originalChange, originalShortcut, originalSwitchToURI, switchToURI, change, shortcut, menu, style, context, restoreMenu;
   let stopped = false;
   let timer;
   const ids = () => Services.prefs.getStringPref(PREF, '');
@@ -113,6 +113,60 @@
     manager = candidate;
     originalChange = manager.changeWorkspace;
     originalShortcut = manager.changeWorkspaceShortcut;
+    originalSwitchToURI = window.switchToTabHavingURI;
+    switchToURI = function (uri, openNew, params = {}, userContextId = null, ...rest) {
+      const spec = typeof uri === 'string' ? uri : uri.spec;
+      const isSettings = url => /^about:(preferences|settings)([?#]|$)/.test(url);
+      if (!isSettings(spec) || !ids()) {
+        return originalSwitchToURI.call(this, uri, openNew, params, userContextId, ...rest);
+      }
+      const normalize = url => {
+        if (typeof params.ignoreFragment === 'string' && params.ignoreFragment.startsWith('whenComparing')) url = url.split('#')[0];
+        if (params.ignoreQueryString || params.replaceQueryString) url = url.replace(/\?[^#]*/, '');
+        return url;
+      };
+      const matches = browser => normalize(browser.currentURI.spec) === normalize(spec)
+        && (userContextId == null || userContextId == (browser.getAttribute('usercontextid') || ''));
+      const { PrivateBrowsingUtils } = ChromeUtils.importESModule('resource://gre/modules/PrivateBrowsingUtils.sys.mjs');
+      let blocked = false;
+      for (const win of Services.wm.getEnumerator('navigator:browser')) {
+        if (win.closed || !win.gZenWorkspaces || PrivateBrowsingUtils.isWindowPrivate(win) !== PrivateBrowsingUtils.isWindowPrivate(window)) continue;
+        const shown = new Set(visibleSpaces(win.gZenWorkspaces.getWorkspaces(), ids()).map(space => space.uuid));
+        blocked ||= win.gZenWorkspaces.allUsedBrowsers.some(browser => {
+          const tab = win.gBrowser.getTabForBrowser(browser);
+          const spaceId = tab?.getAttribute('zen-workspace-id');
+          return spaceId && !tab.hasAttribute('zen-essential') && !shown.has(spaceId) && matches(browser);
+        });
+      }
+      if (!blocked) return originalSwitchToURI.call(this, uri, openNew, params, userContextId, ...rest);
+
+      // Settings is a browser utility. Reuse a reachable local copy without moving
+      // or revealing a synced Settings tab in another Space. Preserve the native
+      // boolean return contract used by openPreferences and its pane navigation.
+      const browser = manager.allUsedBrowsers.find(candidate => {
+        const tab = gBrowser.getTabForBrowser(candidate);
+        return tab && !tab.closing && matches(candidate) && (tab.hasAttribute('zen-essential')
+          || tab.getAttribute('zen-workspace-id') === manager.activeWorkspace);
+      });
+      if (browser) {
+        gBrowser.selectedTab = gBrowser.getTabForBrowser(browser);
+        window.focus();
+        if (params.ignoreFragment === 'whenComparingAndReplace' || params.replaceQueryString) {
+          browser.loadURI(Services.io.newURI(spec), {
+            triggeringPrincipal: params.triggeringPrincipal || Services.scriptSecurityManager.getSystemPrincipal(),
+          });
+        }
+        return true;
+      }
+      if (openNew) {
+        const loadParams = { ...params };
+        for (const key of ['ignoreFragment', 'ignoreQueryString', 'replaceQueryString', 'adoptIntoActiveWindow']) delete loadParams[key];
+        if (userContextId != null) loadParams.userContextId = userContextId;
+        window.openTrustedLinkIn(spec, 'tab', loadParams);
+      }
+      return false;
+    };
+    window.switchToTabHavingURI = switchToURI;
     change = function (space, ...args) {
       const allowed = visible();
       if (space && !allowed.some(item => item.uuid === space.uuid)) {
@@ -152,6 +206,7 @@
     window.removeEventListener('unload', destroy);
     if (manager) {
       manager.removeChangeListeners(schedule);
+      if (window.switchToTabHavingURI === switchToURI) window.switchToTabHavingURI = originalSwitchToURI;
       if (manager.changeWorkspace === change) manager.changeWorkspace = originalChange;
       if (manager.changeWorkspaceShortcut === shortcut) manager.changeWorkspaceShortcut = originalShortcut;
     }

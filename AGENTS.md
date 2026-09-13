@@ -4,6 +4,7 @@ Dependency-free Zen Sine mod. No build step.
 
 - Keep author Kostiantyn Kugot and repository kkugot/hidden-space.
 - Never mutate Space records, tabs, or sync data. Never filter Zen's getWorkspaces().
+- The Settings shortcut may open a new visible Settings tab; preserve existing hidden tabs.
 - Settings are profile-local. Keep custom preferences opted out of Firefox preference sync.
 - Keep at least one visible Space. Restore hidden Spaces through the Show Spaces checklist.
 - Restore navigation methods, styles, menus, and observers on unload.

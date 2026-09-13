@@ -1,4 +1,4 @@
-// Hidden Space settings · Kostiantyn Kugot · 1.3.0
+// Hidden Space settings · Kostiantyn Kugot · 1.3.1
 (() => {
   window.HiddenSpacePicker?.destroy();
   const PREF = 'uc.hidden-space.ids';
